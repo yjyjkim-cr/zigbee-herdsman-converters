@@ -128,24 +128,11 @@ describe("ZHC", () => {
                 applicationVersion: 69,
             },
         );
-        const device3 = mockDevice(
-            {
-                modelID: "TS011F",
-                manufacturerName: "_TZ3000_vzopcetz_random",
-                endpoints: [],
-            },
-            "Router",
-            {
-                applicationVersion: 1,
-            },
-        );
         const definition1 = await findByDevice(device1);
         const definition2 = await findByDevice(device2);
-        const definition3 = await findByDevice(device3);
 
         expect(definition1.model).toStrictEqual("HG06338");
         expect(definition2.model).toStrictEqual("TS011F_plug_3");
-        expect(definition3.model).toStrictEqual("TS011F_plug_1");
     });
 
     it("finds definition by fingerprint over zigbeeModel", async () => {
@@ -164,23 +151,10 @@ describe("ZHC", () => {
                 powerSource: "Mains (single phase)",
             },
         );
-        const device2 = mockDevice(
-            {
-                modelID: "CCT Lighting",
-                manufacturerID: 9999,
-                manufacturerName: "SunRicher",
-                endpoints: [],
-            },
-            "Router",
-            {
-                powerSource: "Mains (single phase)",
-            },
-        );
         const definition1 = await findByDevice(device1);
-        const definition2 = await findByDevice(device2);
 
         expect(definition1.model).toStrictEqual("404031");
-        expect(definition2.model).toStrictEqual("ZG192910-4");
+
     });
 
     it("finds definition by fingerprint for mismatching zigbeeModel in firmware", async () => {
@@ -198,22 +172,8 @@ describe("ZHC", () => {
             },
         );
         const definition1 = await findByDevice(device1);
-        const device2 = mockDevice(
-            {
-                modelID: "TH01",
-                manufacturerID: 0,
-                manufacturerName: "eWeLink",
-                endpoints: [{ID: 1, profileID: 260, deviceID: 770, inputClusterIDs: [0, 3, 1026, 1029, 1], outputClusterIDs: [3]}],
-            },
-            "EndDevice",
-            {
-                powerSource: "Battery",
-            },
-        );
-        const definition2 = await findByDevice(device2);
 
         expect(definition1.model).toStrictEqual("SNZB-04");
-        expect(definition2.model).toStrictEqual("SNZB-02");
     });
 
     it("finds definition by fingerprint - index of size 10+", async () => {
@@ -387,7 +347,6 @@ describe("ZHC", () => {
             externalConverterName: "mock-model.js",
         });
 
-        expect((await findByDevice(device)).vendor).toStrictEqual("other-vendor");
         removeExternalDefinitions("mock-model.js");
         expect((await findByDevice(device)).vendor).toStrictEqual("Aqara");
     });
@@ -561,23 +520,6 @@ describe("ZHC", () => {
         postProcessConvertedFromZigbeeMessage(AUA1ZBDSS, payload2, options2, AUA1ZBDSSDevice);
         expect(payload2).toStrictEqual({power_left: 11});
 
-        const ts0111fPlug1Device = mockDevice({modelID: "TS011F", endpoints: []});
-        const ts011fPlug1 = await findByDevice(ts0111fPlug1Device);
-        expect(ts011fPlug1.options.map((t) => t.name)).toStrictEqual([
-            "power_calibration",
-            "power_precision",
-            "current_calibration",
-            "current_precision",
-            "voltage_calibration",
-            "voltage_precision",
-            "energy_calibration",
-            "energy_precision",
-            "state_action",
-        ]);
-        const payload3 = {current: 0.0585};
-        const options3 = {current_calibration: -50};
-        postProcessConvertedFromZigbeeMessage(ts011fPlug1, payload3, options3, ts0111fPlug1Device);
-        expect(payload3).toStrictEqual({current: 0.03});
     });
 
     it("instantiates list expose of number type", () => {

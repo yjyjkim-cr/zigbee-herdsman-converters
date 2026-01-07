@@ -561,13 +561,6 @@ export async function findDefinition(device: Zh.Device, generateForUnknown = fal
         if (fingerprintMatch.definition) {
             return fingerprintMatch.definition;
         }
-
-        // Match based on fingerprint failed, return first matching definition based on zigbeeModel
-        for (const candidate of candidates) {
-            if (candidate.zigbeeModel && device.modelID && candidate.zigbeeModel.includes(device.modelID)) {
-                return candidate;
-            }
-        }
     }
 
     if (!generateForUnknown) {
